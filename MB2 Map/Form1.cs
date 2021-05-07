@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace MB2_Map
 {
@@ -25,6 +26,7 @@ namespace MB2_Map
             var wd = @$"{Directory.GetCurrentDirectory()}\Towns";
             var di = new DirectoryInfo(wd);
             var files = di.GetFiles("*.txt");
+            var rx = new Regex(@"\d+\.?\d+");
             foreach (var file in files)
             {
                 if (file.DirectoryName == null)
@@ -33,13 +35,13 @@ namespace MB2_Map
                 var line = sr.ReadLine();
                 if (line == null)
                     continue;
-                var splitLine = line.Split(",");
-                if (splitLine.Length != 2)
+                var splitLine = rx.Matches(line);
+                if (splitLine.Count != 2)
                     continue;
                 Invoke(new MethodInvoker(delegate
                 {
                     var extRemoved = file.Name.Remove(file.Name.Length - file.Extension.Length);
-                    _towns.AddTown(extRemoved, float.Parse(splitLine[0]), float.Parse(splitLine[1]));
+                    _towns.AddTown(extRemoved, float.Parse(splitLine[0].Value), float.Parse(splitLine[1].Value));
                     listBox1.Items.Add(extRemoved);
                     listBox2.Items.Add(extRemoved);
                 }));
