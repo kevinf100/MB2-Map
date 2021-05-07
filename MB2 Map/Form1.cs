@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -25,7 +24,6 @@ namespace MB2_Map
         {
             var wd = @$"{Directory.GetCurrentDirectory()}\Towns";
             var di = new DirectoryInfo(wd);
-            //Debugger.Break();
             var files = di.GetFiles("*.txt");
             foreach (var file in files)
             {
@@ -41,7 +39,7 @@ namespace MB2_Map
                 Invoke(new MethodInvoker(delegate
                 {
                     var extRemoved = file.Name.Remove(file.Name.Length - file.Extension.Length);
-                    _towns.AddTown(extRemoved, int.Parse(splitLine[0]), int.Parse(splitLine[1]));
+                    _towns.AddTown(extRemoved, float.Parse(splitLine[0]), float.Parse(splitLine[1]));
                     listBox1.Items.Add(extRemoved);
                     listBox2.Items.Add(extRemoved);
                 }));
@@ -58,7 +56,7 @@ namespace MB2_Map
                     continue;
                 Invoke(new MethodInvoker(delegate
                 {
-                    _towns.AddTrueLocation(splitLine[0], splitLine[1], uint.Parse(splitLine[2]));
+                    _towns.AddTrueLocation(splitLine[0], splitLine[1], float.Parse(splitLine[2]));
                 }));
             }
 
