@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -76,14 +77,14 @@ namespace MB2_Map
         {
             if (listBox1.SelectedItem == null || listBox2.SelectedItem == null)
                 return;
-            label1.Text = _towns.GetTownsDistance((string)listBox1.SelectedItem, (string)listBox2.SelectedItem).ToString();
+            label1.Text = _towns.GetTownsDistance(listBox1.SelectedItem.ToString(), listBox2.SelectedItem.ToString()).ToString(CultureInfo.CurrentCulture);
         }
 
         private void listBox2_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (listBox1.SelectedItem == null || listBox2.SelectedItem == null)
                 return;
-            label1.Text = _towns.GetTownsDistance((string)listBox1.SelectedItem, (string)listBox2.SelectedItem).ToString();
+            label1.Text = _towns.GetTownsDistance(listBox1.SelectedItem.ToString(), listBox2.SelectedItem.ToString()).ToString(CultureInfo.CurrentCulture);
         }
     }
 }
