@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
@@ -84,7 +85,21 @@ namespace MB2_Map
         {
             if (listBox1.SelectedItem == null || listBox2.SelectedItem == null)
                 return;
-            label1.Text = _towns.GetTownsDistance(listBox1.SelectedItem.ToString(), listBox2.SelectedItem.ToString()).ToString(CultureInfo.CurrentCulture);
+            label1.Text = $@"Distance: {_towns.GetTownsDistance(listBox1.SelectedItem.ToString(), listBox2.SelectedItem.ToString()).ToString(CultureInfo.CurrentCulture)}";
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            listBox1.Items.Clear();
+            foreach (var town in _towns.TownsList.Where(town => town.ToLower().Contains(textBox1.Text)))
+                listBox1.Items.Add(town);
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            listBox2.Items.Clear();
+            foreach (var town in _towns.TownsList.Where(town => town.ToLower().Contains(textBox2.Text)))
+                listBox2.Items.Add(town);
         }
     }
 }

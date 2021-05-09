@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
 
 namespace MB2_Map
 {
@@ -11,7 +12,7 @@ namespace MB2_Map
             public string Name { get; }
             public PointF Location { get; }
 
-            public Town(string name, Point location)
+            public Town(string name, PointF location)
             {
                 Name = name;
                 Location = location;
@@ -21,12 +22,11 @@ namespace MB2_Map
                 Name = name;
                 Location = new PointF(locationX, locationY);
             }
-
         }
         private readonly Dictionary<string, Town> _townDictionary = new();
         private readonly Dictionary<(string, string), float> _trueDistance = new();
         public List<string> TownsList { get; } = new();
-        public void AddTown(string name, Point loc)
+        public void AddTown(string name, PointF loc)
         {
             _townDictionary.Add(name, new Town(name, loc));
             TownsList.Add(name);
@@ -52,7 +52,7 @@ namespace MB2_Map
             }
             catch (KeyNotFoundException)
             {
-                return Point.Empty;
+                return PointF.Empty;
             }
         }
         public float GetTownsDistance(string town1, string town2)
