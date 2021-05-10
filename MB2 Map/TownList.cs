@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Globalization;
 using System.Windows.Forms;
 
 namespace MB2_Map
@@ -12,7 +13,7 @@ namespace MB2_Map
             private readonly TownList _mainClass;
             public string Name { get; set; }
             public PointF Location { get; }
-            public float currentDistance => _mainClass.GetTownsDistance(this, _mainClass._referTo.SelectedItem as Town);
+            public float CurrentDistance => _mainClass.GetTownsDistance(this, _mainClass._referTo.SelectedItem as Town);
 
             public Town(TownList mainClass, string name, PointF location)
             {
@@ -32,7 +33,7 @@ namespace MB2_Map
             {
                 return _mainClass._referTo.SelectedItem == null
                     ? Name
-                    : $"{Name} - {_mainClass.GetTownsDistance(this, _mainClass._referTo.SelectedItem as Town)}";
+                    : $"{Name} - {_mainClass.GetTownsDistance(this, _mainClass._referTo.SelectedItem as Town)} - {Math.Ceiling(this.CurrentDistance / decimal.ToSingle(_mainClass._numericupdown.Value)).ToString(CultureInfo.CurrentCulture)} Seconds?";
             }
 
             public string ToString(bool getName)
@@ -44,6 +45,7 @@ namespace MB2_Map
         //private readonly Dictionary<string, Town> _townDictionary = new();
         private readonly Dictionary<(string, string), float> _trueDistance = new();
         private readonly ListBox _referTo;
+        private readonly NumericUpDown _numericupdown;
 
         private readonly Func<Town, Town, float> _distForm = (town1, town2) =>
             (float) Math.Sqrt(Math.Pow(town2.Location.X - town1.Location.X, 2) +
@@ -51,8 +53,10 @@ namespace MB2_Map
 
         public List<Town> TownsList { get; } = new();
 
-        public TownList(ListBox listBox)
+        // ReSharper disable once IdentifierTypo
+        public TownList(ListBox listBox, NumericUpDown numericupdown)
         {
+            _numericupdown = numericupdown;
             _referTo = listBox;
         }
 

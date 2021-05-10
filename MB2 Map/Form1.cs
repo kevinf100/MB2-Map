@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -19,7 +20,7 @@ namespace MB2_Map
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            _towns = new TownList(listBox1);
+            _towns = new TownList(listBox1, numericUpDown1);
             listBox1.Items.Clear();
             var loadFilesThread = new Thread(Load_Files_Into_ListBox);
             loadFilesThread.Start();
@@ -79,7 +80,9 @@ namespace MB2_Map
                 listBox1.DataSource = new List<TownList.Town>(_towns.TownsList);
                 listBox1.SelectedIndex = 0;
                 //Debugger.Break();
-                listBox2.DataSource = new List<TownList.Town>(_towns.TownsList);
+                listBox2.DataSource = new List<TownList.Town>(_towns.TownsList.Where(town1 =>
+                        town1.Name.ToLower().Contains(textBox2.Text.ToLower()))).
+                    OrderBy(f => f.CurrentDistance).ToList();
                 Enabled = true;
             }));
             //Debugger.Break();
@@ -108,31 +111,36 @@ namespace MB2_Map
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //var towns = _towns.TownsList.Select(str => str.ToString()).ToList();
-            //listBox2.DataSource = new List<TownList.Town>(_towns.TownsList);
-            var currentItem = listBox2.SelectedItem;
-            listBox2.DataSource =
-                new List<TownList.Town>(_towns.TownsList.Where(town1 =>
-                    town1.Name.ToLower().Contains(textBox2.Text.ToLower()))).
-                    OrderBy(f => f.currentDistance).ToList();
-            listBox2.SelectedItem = currentItem;
+            UpdateListBox2();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
+            var currentItem = listBox1.SelectedItem;
             listBox1.DataSource =
                 new List<TownList.Town>(_towns.TownsList.Where(town1 =>
                     town1.Name.ToLower().Contains(textBox1.Text.ToLower()))).
-                    OrderBy(f => f.currentDistance).ToList();
+                    OrderBy(f => f.CurrentDistance).ToList();
+            listBox1.SelectedItem = currentItem;
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
+            UpdateListBox2();
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateListBox2();
+        }
+
+        private void UpdateListBox2()
+        {
             var currentItem = listBox2.SelectedItem;
             listBox2.DataSource =
                 new List<TownList.Town>(_towns.TownsList.Where(town1 =>
-                    town1.Name.ToLower().Contains(textBox2.Text.ToLower()))).
-                    OrderBy(f => f.currentDistance).ToList();
+                        town1.Name.ToLower().Contains(textBox2.Text.ToLower()))).
+                    OrderBy(f => f.CurrentDistance).ToList();
             listBox2.SelectedItem = currentItem;
         }
     }
