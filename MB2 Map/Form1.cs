@@ -87,18 +87,20 @@ namespace MB2_Map
         private void LoadTrueList()
         {
             var wd = @$"{Directory.GetCurrentDirectory()}\TrueDistance.txt";
+            var rx = new Regex(@"\s*(\w+ *\w+)\s*,\s*(\w+ ?\w+)\s*, (\d+\.?\d+)");
             using var sr2 = new StreamReader(wd);
             while (!sr2.EndOfStream)
             {
                 var line = sr2.ReadLine();
                 if (line == null)
                     continue;
-                var splitLine = line.Split(",");
-                if (splitLine.Length != 3)
+                var splitLine = rx.Matches(line);
+                //var splitLine = line.Split(",");
+                if (splitLine.Count != 1 && splitLine[0].Groups.Count != 4)
                     continue;
                 Invoke(new MethodInvoker(delegate
                 {
-                    _towns.AddTrueLocation(splitLine[0], splitLine[1], float.Parse(splitLine[2]));
+                    _towns.AddTrueLocation(splitLine[0].Groups[1].Value, splitLine[0].Groups[2].Value, float.Parse(splitLine[0].Groups[3].Value));
                 }));
             }
         }
