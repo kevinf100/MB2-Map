@@ -7,4 +7,8 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if not exist &quot;$(OutDir)\Towns\&quot; mkdir &quot;$(OutDir)\Towns\&quot;&#xD;&#xA;copy &quot;$(ProjectDir)Towns\*&quot; &quot;$(OutDir)\Towns\&quot;&#xD;&#xA;copy &quot;$(ProjectDir)TrueDistance.txt&quot; &quot;$(OutDir)&quot;" />
+  </Target>
+
 </Project>

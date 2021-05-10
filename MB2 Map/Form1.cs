@@ -33,7 +33,7 @@ namespace MB2_Map
             }
             catch (Exception)
             {
-                /* ignored */
+                /* ignored */   
             }
 
             var wd = @$"{Directory.GetCurrentDirectory()}\Towns";
