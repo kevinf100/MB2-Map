@@ -5,78 +5,90 @@ using System.Windows.Forms;
 
 namespace MB2_Map
 {
-    class TownList
+    public class TownList
     {
         public class Town
         {
-            public string Name { get; }
+            private readonly TownList _mainClass;
+            public string Name { get; set; }
             public PointF Location { get; }
 
-            public Town(string name, PointF location)
+            public Town(TownList mainClass, string name, PointF location)
             {
+                _mainClass = mainClass;
                 Name = name;
                 Location = location;
             }
-            public Town(string name, float locationX, float locationY)
+
+            public Town(TownList mainClass, string name, float locationX, float locationY)
             {
+                _mainClass = mainClass;
                 Name = name;
                 Location = new PointF(locationX, locationY);
             }
+
+            public override string ToString()
+            {
+                return _mainClass._referTo.SelectedItem == null
+                    ? Name
+                    : $"{Name} - {_mainClass.GetTownsDistance(this, _mainClass._referTo.SelectedItem as Town)}";
+            }
+
+            public string ToString(bool getName)
+            {
+                return getName ? Name : ToString();
+            }
         }
-        private readonly Dictionary<string, Town> _townDictionary = new();
+
+        //private readonly Dictionary<string, Town> _townDictionary = new();
         private readonly Dictionary<(string, string), float> _trueDistance = new();
-        public List<string> TownsList { get; } = new();
+        private readonly ListBox _referTo;
+
+        private readonly Func<Town, Town, float> _distForm = (town1, town2) =>
+            (float) Math.Sqrt(Math.Pow(town2.Location.X - town1.Location.X, 2) +
+                              Math.Pow(town2.Location.Y - town1.Location.Y, 2));
+
+        public List<Town> TownsList { get; } = new();
+
+        public TownList(ListBox listBox)
+        {
+            _referTo = listBox;
+        }
+
         public void AddTown(string name, PointF loc)
         {
-            _townDictionary.Add(name, new Town(name, loc));
-            TownsList.Add(name);
+            TownsList.Add(new Town(this, name, loc));
         }
+
         public void AddTown(string name, float locationX, float locationY)
         {
-            _townDictionary.Add(name, new Town(name, locationX, locationY));
-            TownsList.Add(name);
+            var newTown = new Town(this, name, locationX, locationY);
+            TownsList.Add(newTown);
+            foreach (var town in TownsList)
+            {
+                string[] townArray = {name, town.ToString()};
+                Array.Sort(townArray);
+                var townTuple = (townArray[0], townArray[1]);
+                if (!_trueDistance.ContainsKey(townTuple))
+                    _trueDistance.Add(townTuple, _distForm(town, newTown));
+            }
         }
 
         public void AddTrueLocation(string town1, string town2, float distance)
         {
-            string[] townArray = { town1, town2 };
+            string[] townArray = {town1, town2};
             Array.Sort(townArray);
-            _trueDistance.Add((townArray[0], townArray[1]), distance);
+            var townTuple = (townArray[0], townArray[1]);
+            if (!_trueDistance.ContainsKey(townTuple))
+                _trueDistance.Add((townArray[0], townArray[1]), distance);
         }
 
-        public PointF GetTownPoint(string name)
+        public float GetTownsDistance(Town town1, Town town2)
         {
-            try
-            {
-                return _townDictionary[name].Location;
-            }
-            catch (KeyNotFoundException)
-            {
-                return PointF.Empty;
-            }
-        }
-        public float GetTownsDistance(string town1, string town2)
-        {
-            try
-            {
-                //Debugger.Break();
-                string[] townArray = { town1, town2 };
-                Array.Sort(townArray);
-                return _trueDistance[(townArray[0], townArray[1])];
-            }
-            catch (KeyNotFoundException)
-            {
-                try
-                {
-                    var town1Obj = _townDictionary[town1];
-                    var town2Obj = _townDictionary[town2];
-                    return (float)Math.Sqrt(Math.Pow(town2Obj.Location.X - town1Obj.Location.X, 2) + Math.Pow(town2Obj.Location.Y - town1Obj.Location.Y, 2));
-                }
-                catch (KeyNotFoundException)
-                {
-                    return default;
-                }
-            }
+            //Debugger.Break();
+            string[] townArray = {town1.ToString(true), town2.ToString(true)};
+            Array.Sort(townArray);
+            return _trueDistance[(townArray[0], townArray[1])];
         }
     }
 }
