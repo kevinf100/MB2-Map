@@ -12,6 +12,7 @@ namespace MB2_Map
             private readonly TownList _mainClass;
             public string Name { get; set; }
             public PointF Location { get; }
+            public float currentDistance => _mainClass.GetTownsDistance(this, _mainClass._referTo.SelectedItem as Town);
 
             public Town(TownList mainClass, string name, PointF location)
             {

@@ -29,6 +29,7 @@ namespace MB2_Map
         {
             try
             {
+                // TODO: Add time to get to location
                 LoadTrueList();
             }
             catch (Exception)
@@ -112,7 +113,8 @@ namespace MB2_Map
             var currentItem = listBox2.SelectedItem;
             listBox2.DataSource =
                 new List<TownList.Town>(_towns.TownsList.Where(town1 =>
-                    town1.Name.ToLower().Contains(textBox2.Text.ToLower())));
+                    town1.Name.ToLower().Contains(textBox2.Text.ToLower()))).
+                    OrderBy(f => f.currentDistance).ToList();
             listBox2.SelectedItem = currentItem;
         }
 
@@ -120,7 +122,8 @@ namespace MB2_Map
         {
             listBox1.DataSource =
                 new List<TownList.Town>(_towns.TownsList.Where(town1 =>
-                    town1.Name.ToLower().Contains(textBox1.Text.ToLower())));
+                    town1.Name.ToLower().Contains(textBox1.Text.ToLower()))).
+                    OrderBy(f => f.currentDistance).ToList();
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
@@ -128,7 +131,8 @@ namespace MB2_Map
             var currentItem = listBox2.SelectedItem;
             listBox2.DataSource =
                 new List<TownList.Town>(_towns.TownsList.Where(town1 =>
-                    town1.Name.ToLower().Contains(textBox2.Text.ToLower())));
+                    town1.Name.ToLower().Contains(textBox2.Text.ToLower()))).
+                    OrderBy(f => f.currentDistance).ToList();
             listBox2.SelectedItem = currentItem;
         }
     }
